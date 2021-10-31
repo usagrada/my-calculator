@@ -1,13 +1,10 @@
 #[macro_use]
 extern crate pest_derive;
-use std::fs;
-mod ast;
-
 use pest::Parser;
-
-#[derive(Parser, std::clone::Clone, std::marker::Copy)]
-#[grammar = "./calc.pest"]
-pub struct CalcParser;
+use std::fs;
+mod parser;
+use parser::{CalcParser, *};
+mod interpreter;
 
 fn main() {
   let unparsed_file = fs::read_to_string("calc.txt").expect("cannot read file");
@@ -22,7 +19,7 @@ fn main() {
       for iter in input.clone().into_inner() {
         match iter.as_rule() {
           Rule::expr => {
-            let num = ast::expr_ast(iter);
+            let num = interpreter::expr_ast(iter);
             println!("result: {}", num);
           }
           _ => {}

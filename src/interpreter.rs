@@ -105,3 +105,29 @@ pub fn parexpr_ast(par_expr: pest::iterators::Pair<Rule>) -> i32 {
     sum + value
   })
 }
+
+#[cfg(test)]
+mod test {
+  use super::super::parser::*;
+  use super::*;
+  use pest::Parser;
+  #[test]
+  fn test1() {
+    let input = CalcParser::parse(Rule::expr, "1+1")
+      .expect("unsuccessful parse") // unwrap the parse result
+      .next()
+      .unwrap();
+    let num = expr_ast(input);
+    assert_eq!(num, 2);
+  }
+
+  #[test]
+  fn test2() {
+    let input = CalcParser::parse(Rule::expr, "1*1")
+      .expect("unsuccessful parse") // unwrap the parse result
+      .next()
+      .unwrap();
+    let num = expr_ast(input);
+    assert_eq!(num, 1);
+  }
+}
