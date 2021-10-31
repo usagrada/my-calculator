@@ -83,37 +83,25 @@ pub fn mul_ast(mul: pest::iterators::Pair<Rule>) -> i32 {
   num1
 }
 
+/// use for value
 pub fn val_ast(val: pest::iterators::Pair<Rule>) -> i32 {
-  // let valvec: Vec<_> = val.into_inner().collect();
-  let mut num = 0;
-  for iter in val.into_inner() {
-    match iter.as_rule() {
-      Rule::num => {
-        num = iter.as_str().parse().unwrap();
-      },
-      Rule::parexpr => {
-        num += parexpr_ast(iter);
-      }
-      _ => {
-        unreachable!();
-      }
-    }
-  }
-  num
+  val.into_inner().fold(0, |sum, iter| {
+    let value = match iter.as_rule() {
+      Rule::num => iter.as_str().parse().unwrap(),
+      Rule::parexpr => parexpr_ast(iter),
+      _ => unreachable!(),
+    };
+    sum + value
+  })
 }
 
 /// use only par expr
 pub fn parexpr_ast(par_expr: pest::iterators::Pair<Rule>) -> i32 {
-  let mut num = 0;
-  for iter in par_expr.into_inner() {
-    match iter.as_rule() {
-      Rule::expr => {
-        num += expr_ast(iter);
-      }
-      _ => {
-        unreachable!();
-      }
-    }
-  }
-  num
+  par_expr.into_inner().fold(0, |sum, iter| {
+    let value = match iter.as_rule() {
+      Rule::expr => expr_ast(iter),
+      _ => unreachable!(),
+    };
+    sum + value
+  })
 }
