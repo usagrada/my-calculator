@@ -1,0 +1,9 @@
+op = { "+" | "-" }
+mulop = { "*" | "/" }
+file = { (expr ~ whitespace*)+ }
+whitespace = _{(" " | "\n")}
+expr = { (mul ~whitespace*~ op ~ whitespace*)* ~ mul }
+mul = { (val ~ mulop)* ~ val }
+parexpr = {"(" ~ expr ~ ")"}
+val = { ( num | parexpr) }
+num = {('0'..'9')+}
