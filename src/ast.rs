@@ -6,7 +6,7 @@ use nom::{
   character::complete::{digit1 as digit, multispace0 as multispace},
   combinator::{map, map_res},
   multi::many0,
-  sequence::{delimited, preceded},
+  sequence::{delimited, preceded, tuple},
   IResult,
 };
 
@@ -80,13 +80,18 @@ pub fn term(i: &str) -> IResult<&str, Expr> {
 }
 
 pub fn factor(i: &str) -> IResult<&str, Expr> {
-  alt((
-    map(
-      map_res(delimited(multispace, digit, multispace), FromStr::from_str),
-      Expr::Value,
-    ),
-    parens,
-  ))(i)
+  alt((delimited(multispace, num, multispace), parens))(i)
+}
+fn unary(i: &str) -> IResult<&str, Expr> {
+  let a = alt::<&str, _, (_, _), _>((tag("+"), tag("-")));
+  let (i, v) = tuple::<&str, _, (_, _), _>((a, digit))(i).expect("error");
+  let s = format!("{}{}", v.0, v.1);
+  let v = FromStr::from_str(&s).expect("error");
+  Ok((i, Expr::Value(v)))
+}
+
+pub fn num(i: &str) -> IResult<&str, Expr> {
+  alt((map(map_res(digit, FromStr::from_str), Expr::Value), unary))(i)
 }
 
 pub fn parens(i: &str) -> IResult<&str, Expr> {
@@ -116,5 +121,14 @@ mod test {
         ),
       ))
     );
+  }
+
+  #[test]
+  fn expr_test2() {
+    assert_eq!(expr("-3"), Ok(("", Expr::Value(-3))));
+  }
+  #[test]
+  fn expr_test3() {
+    assert_eq!(expr("+3"), Ok(("", Expr::Value(3))));
   }
 }

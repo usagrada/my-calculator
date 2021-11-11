@@ -11,17 +11,17 @@ pub fn calc(op: &str) -> String {
   let mut res = vec![];
   // val1
   res.push(sp_add(16));
-  res.push(format!("\tldr	w0, [sp, 12]\n"));
+  res.push("\tldr	w0, [sp, 12]\n".to_owned());
 
   // val2
   res.push(sp_add(16));
-  res.push(format!("\tldr	w1, [sp, 12]\n"));
+  res.push("\tldr	w1, [sp, 12]\n".to_owned());
 
   // calc
   res.push(format!("\t{}	w0, w1, w0\n", op));
 
   // store
-  res.push(format!("\tstr	w0, [sp, 12]\n"));
+  res.push("\tstr	w0, [sp, 12]\n".to_owned());
   res.push(sp_sub(16));
 
   // return

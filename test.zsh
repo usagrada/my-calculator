@@ -23,5 +23,7 @@ assert 6 "1 + 2 + 3"
 assert 0 "5 - 2 - 3"
 assert 4 "10 - 2 * 3"
 assert 1 "5 / 2 - 1"
+assert 1 "+1"
+assert 255 "-1" # 返り値が0-255
 
 echo OK

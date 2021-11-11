@@ -13,7 +13,7 @@ _main:
 
   result.push(cogen_expr(ast));
   result.push(helper::sp_add(16));
-  result.push(format!("\tldr	w0, [sp, 12]\n"));
+  result.push("\tldr	w0, [sp, 12]\n".to_owned());
 
   let ret = "\tret\n".to_owned();
   result.push(ret);
@@ -25,7 +25,7 @@ pub fn cogen_expr(ast: ast::Expr) -> String {
   match ast {
     ast::Expr::Value(i) => {
       result.push(format!("\tmov	w0, {}\n", i));
-      result.push(format!("\tstr	w0, [sp, 12]\n"));
+      result.push("\tstr	w0, [sp, 12]\n".to_owned());
       result.push(helper::sp_sub(16));
     }
     ast::Expr::Add(l, r) => {
@@ -61,16 +61,18 @@ pub fn cogen_expr(ast: ast::Expr) -> String {
 
 #[cfg(test)]
 mod tests {
-  use super::*;
+  use std::str::FromStr;
   #[test]
-  fn it_works() {
-    // #![feature(asm)]
-    unsafe {
-      asm!("nop");
-    }
-    let (_, expr) = ast::expr("1").expect("error");
-    let n = cogen_expr(expr);
-    unsafe {
-    }
+  fn test() {
+    let s = "-1";
+    let i: i32 = FromStr::from_str(s).expect("error");
+    assert_eq!(-1, i);
+  }
+
+  #[test]
+  fn test2() {
+    let s = "+1";
+    let i: i32 = FromStr::from_str(s).expect("error");
+    assert_eq!(1, i);
   }
 }
